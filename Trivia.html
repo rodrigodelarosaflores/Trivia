@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trivia de Conocimientos Generales</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f8ff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .quiz-container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      max-width: 600px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    }
+    h2 {
+      margin-bottom: 20px;
+    }
+    .options button {
+      display: block;
+      margin: 10px 0;
+      padding: 10px;
+      width: 100%;
+      font-size: 16px;
+      border: 2px solid #ccc;
+      border-radius: 5px;
+      background: #f9f9f9;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .options button.correct {
+      background-color: #c8e6c9;
+      border-color: #2e7d32;
+      color: #2e7d32;
+    }
+    .options button.incorrect {
+      background-color: #ffcdd2;
+      border-color: #c62828;
+      color: #c62828;
+    }
+    button#next {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      display: none;
+    }
+    .result {
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-container animate__animated animate__fadeIn">
+    <div id="quiz">
+      <h2 id="question">Cargando pregunta...</h2>
+      <div class="options" id="options"></div>
+      <button id="next" onclick="nextQuestion()">Siguiente</button>
+    </div>
+    <div id="result" class="result" style="display: none;"></div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        question: "¿Cuál es la capital de Francia?",
+        options: ["Madrid", "París", "Londres", "Berlín"],
+        answer: 1
+      },
+      {
+        question: "¿Qué planeta es conocido como el planeta rojo?",
+        options: ["Venus", "Marte", "Júpiter", "Saturno"],
+        answer: 1
+      },
+      {
+        question: "¿Quién escribió 'Cien años de soledad'?",
+        options: ["Mario Vargas Llosa", "Gabriel García Márquez", "Pablo Neruda", "Julio Cortázar"],
+        answer: 1
+      },
+      {
+        question: "¿Qué instrumento mide la temperatura?",
+        options: ["Barómetro", "Altímetro", "Termómetro", "Anemómetro"],
+        answer: 2
+      },
+      {
+        question: "¿Cuántos lados tiene un hexágono?",
+        options: ["Cinco", "Seis", "Siete", "Ocho"],
+        answer: 1
+      },
+      {
+        question: "¿Cuál es el símbolo químico del agua?",
+        options: ["H2O", "O2", "CO2", "NaCl"],
+        answer: 0
+      },
+      {
+        question: "¿Qué océano es el más grande del mundo?",
+        options: ["Atlántico", "Índico", "Pacífico", "Ártico"],
+        answer: 2
+      },
+      {
+        question: "¿Quién pintó la Mona Lisa?",
+        options: ["Miguel Ángel", "Leonardo da Vinci", "Picasso", "Rembrandt"],
+        answer: 1
+      },
+      {
+        question: "¿En qué continente se encuentra Egipto?",
+        options: ["Europa", "África", "Asia", "América"],
+        answer: 1
+      },
+      {
+        question: "¿Cuántos días tiene un año bisiesto?",
+        options: ["365", "366", "364", "360"],
+        answer: 1
+      }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+
+    const questionEl = document.getElementById("question");
+    const optionsEl = document.getElementById("options");
+    const nextBtn = document.getElementById("next");
+    const resultEl = document.getElementById("result");
+    const quizEl = document.getElementById("quiz");
+
+    function loadQuestion() {
+      const q = questions[currentQuestion];
+      questionEl.textContent = q.question;
+      optionsEl.innerHTML = "";
+      nextBtn.style.display = "none";
+      q.options.forEach((option, index) => {
+        const btn = document.createElement("button");
+        btn.textContent = option;
+        btn.onclick = () => selectOption(btn, index);
+        optionsEl.appendChild(btn);
+      });
+    }
+
+    function selectOption(btn, index) {
+      const correctIndex = questions[currentQuestion].answer;
+      const buttons = optionsEl.querySelectorAll("button");
+      buttons.forEach(b => b.disabled = true);
+
+      if (index === correctIndex) {
+        btn.classList.add("correct");
+        score++;
+      } else {
+        btn.classList.add("incorrect");
+        buttons[correctIndex].classList.add("correct");
+      }
+
+      nextBtn.style.display = "block";
+    }
+
+    function nextQuestion() {
+      currentQuestion++;
+      if (currentQuestion < questions.length) {
+        loadQuestion();
+      } else {
+        showResult();
+      }
+    }
+
+    function showResult() {
+      quizEl.style.display = "none";
+      resultEl.style.display = "block";
+      let feedback = "";
+      if (score === 10) feedback = "¡Excelente! ¡Eres un genio!";
+      else if (score >= 7) feedback = "¡Muy bien! Tienes buen conocimiento.";
+      else if (score >= 5) feedback = "¡Bien! Pero puedes mejorar.";
+      else feedback = "Necesitas estudiar un poco más.";
+      resultEl.innerHTML = `<h2>Resultado Final</h2><p>Puntaje: ${score} / 10</p><p>${feedback}</p>`;
+    }
+
+    loadQuestion();
+  </script>
+</body>
+</html>
